@@ -29,7 +29,7 @@ class ViewController: UIViewController {
                 "lastName"    : "Kargopolov",
                 "userId"    : "9"
             ]
-        let docURL = URL(string: "file:///private/var/mobile/Containers/Data/Application/543BFA00-01D3-4B2D-8A85-A512597EE5D1/tmp/Triarqhealth.QPathways.1-Inbox/Discharge%20documents%20.ppt") //ADD DOCUMENT GENERATED URL HERE
+        let docURL = URL(string: "") //ADD DOCUMENT GENERATED URL HERE
         let url = URL(string: OBuzzCoreConstants.DocumentFileSaveURL)
         /*url - request url
          docURL = document generated url

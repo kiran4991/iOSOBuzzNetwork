@@ -10,7 +10,7 @@ import Foundation
 public class OBuzzCoreConstants : NSObject{
     static let TOKEN = "TOKEN"
     static let token2ForTest = ""
-    public static var ServiceURL = "https://qaservices.qpathways.com/otc"
-    public static var DocumentFileSaveURL :String =  OBuzzCoreConstants.ServiceURL + "/media/save"
+    public static var ServiceURL = ""
+    public static var DocumentFileSaveURL :String =  OBuzzCoreConstants.ServiceURL + ""
     public override init(){}
 }
