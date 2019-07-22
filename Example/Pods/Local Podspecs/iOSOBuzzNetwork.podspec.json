@@ -1,0 +1,22 @@
+{
+  "name": "iOSOBuzzNetwork",
+  "version": "0.1.0",
+  "summary": "A short description of iOSOBuzzNetwork.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/bharatbhamare/iOSOBuzzNetwork",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "bharatbhamare": "kiran.sole@triarqhealth.com"
+  },
+  "source": {
+    "git": "https://github.com/bharatbhamare/iOSOBuzzNetwork.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "iOSOBuzzNetwork/Classes/**/*"
+}
