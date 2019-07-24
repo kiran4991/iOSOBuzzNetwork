@@ -79,6 +79,10 @@ extension OBuzzNetworking {
         //let params = OBuzzParams(model: model)
         OBuzzRequest(url: url,docURL : docURL,method: .post, params: params, filePathKey: filePathKey, isSetHeader: isSetHeader)?.execute(completion: completion)
     }
+    public class func postImage(url: URL?, docURL : URL?,params: [String: Any]?,filePathKey: String,image : UIImage,compressionQuality : CGFloat,isSetHeader : Bool, completion: @escaping (OBuzzResponse) -> Void) {
+        //let params = OBuzzParams(model: model)
+        OBuzzRequest(url: url,docURL : docURL,method: .post, params: params, filePathKey: filePathKey, image : image, compressionQuality : compressionQuality, isSetHeader: isSetHeader)?.execute(completion: completion)
+    }
     
 }
 

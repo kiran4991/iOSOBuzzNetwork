@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'iOSOBuzzNetwork'
-  s.version          = '0.1.0'
+  s.version          = '0.1.1'
   s.summary          = 'This is short summary of iOSOBuzzNetwork.'
 
 # This description is used to generate tags and improve search results.
@@ -26,7 +26,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/kiran4991/iOSOBuzzNetwork.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '10.0'
 
   s.source_files = 'iOSOBuzzNetwork/Classes/**/*'
   s.swift_version = '4.2'

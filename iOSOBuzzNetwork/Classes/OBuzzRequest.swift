@@ -21,13 +21,16 @@ public class OBuzzRequest {
     public var documentParams : [String: Any]?
     public var filePathKey : String!
     public var docURL : URL?
+    
+    public var imagePicked : UIImage!
+    public var compressionQuality : CGFloat!
     public init(baseUrl : URL,fullUrl : URL, httpMethod : OBuzzMethod, httpParams : OBuzzParams){
         self.baseUrl = baseUrl
         self.fullUrl = fullUrl
         self.httpMethod = httpMethod
         self.httpParams = httpParams
     }
-    
+    //for normal call
     public init?(route: String? = nil, url: URL? = nil, method: OBuzzMethod = .get, params: OBuzzParams? = nil,isSetHeader : Bool) {
         //OBuzzNetworking.setServerUrl(url: URL(string: GlobalConstants.BaseURL))
         httpMethod = method
@@ -43,6 +46,7 @@ public class OBuzzRequest {
         
         configureRequest(isSetHeader: isSetHeader)
     }
+    //for document upload
     public init?(url: URL? = nil, docURL : URL? = nil ,method: OBuzzMethod = .get, params: [String: Any]? = nil, filePathKey : String,isSetHeader : Bool) {
         //OBuzzNetworking.setServerUrl(url: URL(string: GlobalConstants.BaseURL))
         httpMethod = method
@@ -52,6 +56,21 @@ public class OBuzzRequest {
         if let requestUrl = url {
                 fullUrl = requestUrl
             }
+        
+        configureRequestForDocUpload(isSetHeader: isSetHeader)
+    }
+    //for image upload
+    public init?(url: URL? = nil, docURL : URL? = nil ,method: OBuzzMethod = .get, params: [String: Any]? = nil, filePathKey : String,image : UIImage, compressionQuality : CGFloat,isSetHeader : Bool) {
+        //OBuzzNetworking.setServerUrl(url: URL(string: GlobalConstants.BaseURL))
+        httpMethod = method
+        documentParams = params
+        imagePicked = image
+        self.compressionQuality = compressionQuality
+        self.docURL = docURL
+        self.filePathKey = filePathKey
+        if let requestUrl = url {
+            fullUrl = requestUrl
+        }
         
         configureRequestForDocUpload(isSetHeader: isSetHeader)
     }
@@ -80,7 +99,26 @@ public class OBuzzRequest {
         
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
             //request.httpBody = params.paramData
-        request.httpBody = createBodyWithParameters(docURL :self.docURL!,parameters: documentParams, filePathKey: filePathKey, boundary: boundary)
+        let data = try! Data(contentsOf: self.docURL!)
+        request.httpBody = createBodyWithParameters(docURL :self.docURL!,parameters: documentParams, filePathKey: filePathKey, boundary: boundary,data : data)
+        if isSetHeader{
+            OBuzzNetworking.setCustomAuthHeader()
+            request.setValue("Bearer " + OBuzzConfiguration.shared.defaultAuthorizationHeader!, forHTTPHeaderField: "Authorization")
+        }
+        //}
+    }
+    public func configureRequestForImageUpload(isSetHeader : Bool) {
+        request = URLRequest(url: fullUrl)
+        request.httpMethod = httpMethod.rawValue
+        // if let _ = baseUrl {
+        let boundary = generateBoundaryString()
+        
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+       // if #available(iOS 12, *){
+            if let imageData = self.imagePicked.jpegData(compressionQuality: compressionQuality){
+                request.httpBody = createBodyWithParameters(docURL :self.docURL!,parameters: documentParams, filePathKey: filePathKey, boundary: boundary,data : imageData)
+            }
+     //   }
         if isSetHeader{
             OBuzzNetworking.setCustomAuthHeader()
             request.setValue("Bearer " + OBuzzConfiguration.shared.defaultAuthorizationHeader!, forHTTPHeaderField: "Authorization")
@@ -90,7 +128,7 @@ public class OBuzzRequest {
     func generateBoundaryString() -> String {
         return "Boundary-\(NSUUID().uuidString)"
     }
-    func createBodyWithParameters(docURL : URL ,parameters: [String: Any]?, filePathKey: String?, boundary: String) -> Data {
+    func createBodyWithParameters(docURL : URL ,parameters: [String: Any]?, filePathKey: String?, boundary: String,data : Data?) -> Data {
         var body = Data()
         
         if parameters != nil {
@@ -103,19 +141,19 @@ public class OBuzzRequest {
         
         let filename = docURL.lastPathComponent
         let mimetype = String().mimeTypeForPath(path : docURL.path)
-        let data = try! Data(contentsOf: docURL)
+        
         body.append(string:"--\(boundary)\r\n")
         body.append(string:"Content-Disposition: form-data; name=\"\(filePathKey!)\"; filename=\"\(filename)\"\r\n")
         body.append(string:"Content-Type: \(mimetype)\r\n\r\n")
-        body.append(data)
+        if let thisData = data{
+        body.append(thisData)
+        }
         body.append(string:"\r\n")
-        
-        
-        
         body.append(string:"--\(boundary)--\r\n")
         
         return body
     }
+    
     
     public func execute(completion: @escaping (OBuzzResponse) -> Void) {
         DispatchQueue.global(qos: .userInteractive).async{
